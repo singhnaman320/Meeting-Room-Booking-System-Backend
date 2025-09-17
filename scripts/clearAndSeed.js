@@ -1,44 +1,21 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const User = require('../models/User');
 const Room = require('../models/Room');
+const User = require('../models/User');
+const Booking = require('../models/Booking');
 const config = require('../config/config');
 
-const seedDatabase = async () => {
+const clearAndSeedRooms = async () => {
   try {
-    console.log('Seeding database...');
+    console.log('Connecting to database...');
+    await mongoose.connect(config.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
 
-    // Clear existing data
-    await User.deleteMany({});
+    console.log('Clearing existing rooms...');
     await Room.deleteMany({});
-    await Booking.deleteMany({}); // Added Booking deleteMany
     
-    console.log('Cleared existing data...');
-
-    // Create admin user
-    console.log('Creating admin user...');
-    const adminUser = new User({
-      name: 'Admin User',
-      email: 'admin@example.com',
-      password: 'admin123',
-      department: 'IT',
-      role: 'admin'
-    });
-    await adminUser.save();
-
-    // Create employee user
-    console.log('Creating employee user...');
-    const employeeUser = new User({
-      name: 'John Doe',
-      email: 'john@example.com',
-      password: 'password123',
-      department: 'Marketing',
-      role: 'employee'
-    });
-    await employeeUser.save();
-
-    // Create sample rooms
-    console.log('Creating sample rooms...');
+    console.log('Creating rooms with proper location enum values...');
     const rooms = [
       {
         name: 'Conference Room A',
@@ -98,25 +75,31 @@ const seedDatabase = async () => {
       }
     ];
 
-    await Room.insertMany(rooms);
-
-    console.log('Database seeded successfully!');
-    console.log('\nTest Accounts Created:');
-    console.log('Admin: admin@example.com / admin123');
-    console.log('Employee: john@example.com / password123');
-    console.log(`\nSample rooms created: ${rooms.length} rooms with various amenities and floor locations`);
+    const createdRooms = await Room.insertMany(rooms);
+    console.log(`✅ Successfully created ${createdRooms.length} rooms`);
+    
+    // Verify rooms were created
+    const roomCount = await Room.countDocuments();
+    console.log(`📊 Total rooms in database: ${roomCount}`);
+    
+    // List all rooms
+    const allRooms = await Room.find().select('name location capacity');
+    console.log('\n📋 Created rooms:');
+    allRooms.forEach(room => {
+      console.log(`  - ${room.name} (${room.location}) - Capacity: ${room.capacity}`);
+    });
 
   } catch (error) {
-    console.error('Error seeding database:', error);
+    console.error('❌ Error:', error);
   } finally {
     await mongoose.connection.close();
-    console.log('Database connection closed');
+    console.log('\n🔌 Database connection closed');
   }
 };
 
-// Run seeder if called directly
+// Run if called directly
 if (require.main === module) {
-  seedDatabase();
+  clearAndSeedRooms();
 }
 
-module.exports = seedDatabase;
+module.exports = clearAndSeedRooms;

@@ -13,11 +13,12 @@ const roomSchema = new mongoose.Schema({
   },
   location: {
     type: String,
-    required: true
+    required: true,
+    enum: ['Floor 1 - Wing A', 'Floor 1 - Wing B', 'Floor 1 - Training Center', 'Floor 2 - Wing A', 'Floor 2 - Wing B', 'Floor 3 - Executive Wing', 'Floor 3 - Conference Center', 'Ground Floor - Reception']
   },
   amenities: [{
     type: String,
-    enum: ['projector', 'whiteboard', 'video_conference', 'audio_system', 'wifi', 'air_conditioning']
+    enum: ['projector', 'whiteboard', 'video_conference', 'audio_system', 'wifi']
   }],
   isAvailable: {
     type: Boolean,

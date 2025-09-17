@@ -2,7 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const Room = require('../models/Room');
 const Booking = require('../models/Booking');
-const { auth, adminAuth } = require('../middleware/auth');
+const { auth } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -77,8 +77,8 @@ router.get('/:id/availability', auth, async (req, res) => {
   }
 });
 
-// Create room (Admin only)
-router.post('/', adminAuth, [
+// Create room
+router.post('/', auth, [
   body('name').trim().notEmpty().withMessage('Room name is required'),
   body('capacity').isInt({ min: 1 }).withMessage('Capacity must be a positive integer'),
   body('location').trim().notEmpty().withMessage('Location is required')
@@ -107,8 +107,8 @@ router.post('/', adminAuth, [
   }
 });
 
-// Update room (Admin only)
-router.put('/:id', adminAuth, async (req, res) => {
+// Update room
+router.put('/:id', auth, async (req, res) => {
   try {
     const { name, capacity, location, amenities, description, isAvailable } = req.body;
 
@@ -129,8 +129,8 @@ router.put('/:id', adminAuth, async (req, res) => {
   }
 });
 
-// Delete room (Admin only)
-router.delete('/:id', adminAuth, async (req, res) => {
+// Delete room
+router.delete('/:id', auth, async (req, res) => {
   try {
     const room = await Room.findById(req.params.id);
     if (!room) {

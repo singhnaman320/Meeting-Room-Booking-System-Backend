@@ -82,8 +82,8 @@ router.get('/:id', auth, async (req, res) => {
       return res.status(404).json({ message: 'Booking not found' });
     }
 
-    // Check if user owns the booking or is admin
-    if (booking.user._id.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+    // Check if user owns the booking
+    if (booking.user._id.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -253,8 +253,8 @@ router.put('/:id', auth, async (req, res) => {
       return res.status(404).json({ message: 'Booking not found' });
     }
 
-    // Check if user owns the booking or is admin
-    if (booking.user.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+    // Check if user owns the booking
+    if (booking.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -301,8 +301,8 @@ router.patch('/:id/cancel', auth, async (req, res) => {
       return res.status(404).json({ message: 'Booking not found' });
     }
 
-    // Check if user owns the booking or is admin
-    if (booking.user.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+    // Check if user owns the booking
+    if (booking.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -344,8 +344,8 @@ router.delete('/:id', auth, async (req, res) => {
       return res.status(404).json({ message: 'Booking not found' });
     }
 
-    // Check if user owns the booking or is admin
-    if (booking.user.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+    // Check if user owns the booking
+    if (booking.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Access denied' });
     }
 
