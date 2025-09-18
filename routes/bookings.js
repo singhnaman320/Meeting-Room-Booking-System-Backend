@@ -146,6 +146,28 @@ router.post('/', auth, [
 
     const start = new Date(startTime);
     const end = new Date(endTime);
+    const now = new Date();
+
+    // Validate booking times
+    if (start >= end) {
+      return res.status(400).json({ 
+        message: 'End time must be after start time' 
+      });
+    }
+
+    if (start < now) {
+      return res.status(400).json({ 
+        message: 'Cannot book meetings in the past' 
+      });
+    }
+
+    // Check maximum booking duration (24 hours)
+    const maxDuration = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+    if (end - start > maxDuration) {
+      return res.status(400).json({ 
+        message: 'Booking duration cannot exceed 24 hours' 
+      });
+    }
 
     // Check for conflicts
     const conflict = await checkBookingConflict(room, start, end);
@@ -264,6 +286,28 @@ router.put('/:id', auth, async (req, res) => {
     if (startTime && endTime) {
       const start = new Date(startTime);
       const end = new Date(endTime);
+      const now = new Date();
+      
+      // Validate booking times
+      if (start >= end) {
+        return res.status(400).json({ 
+          message: 'End time must be after start time' 
+        });
+      }
+
+      if (start < now) {
+        return res.status(400).json({ 
+          message: 'Cannot book meetings in the past' 
+        });
+      }
+
+      // Check maximum booking duration (24 hours)
+      const maxDuration = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+      if (end - start > maxDuration) {
+        return res.status(400).json({ 
+          message: 'Booking duration cannot exceed 24 hours' 
+        });
+      }
       
       const conflict = await checkBookingConflict(booking.room, start, end, booking._id);
       if (conflict) {
