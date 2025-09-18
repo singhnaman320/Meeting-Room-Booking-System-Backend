@@ -5,11 +5,11 @@ A modern, employee-focused meeting room booking system backend built with Node.j
 ## 🚀 Features
 
 ### Core Functionality
-- **Employee Authentication** - JWT-based secure login/registration
-- **Room Management** - Create, read, update, delete meeting rooms
-- **Booking System** - Complete booking lifecycle management
-- **Profile Management** - User profile updates and management
-- **Real-time Availability** - Check room availability by date/time
+- **Employee Authentication** - JWT-based secure login/registration with redirect to login after signup
+- **Room Management** - Create, read, update, delete meeting rooms with filtering
+- **Booking System** - Complete booking lifecycle with validation and conflict prevention
+- **Profile Management** - User profile updates (name, email, department)
+- **Booking Validation** - Prevents past bookings and enforces 24-hour maximum duration
 
 ### Key Characteristics
 - **Employee-Only Access** - Simplified permission system (no admin roles)
@@ -156,7 +156,7 @@ NODE_ENV=development
   startTime: Date (required),
   endTime: Date (required),
   attendees: Number,
-  status: String (enum: ['active', 'cancelled', 'completed']),
+  status: String (enum: ['active', 'cancelled']),
   createdAt: Date,
   updatedAt: Date
 }
@@ -172,14 +172,20 @@ NODE_ENV=development
 
 ## 🚀 Deployment
 
+### Live Deployment
+- **Platform**: Render
+- **URL**: [Backend API on Render](https://meeting-room-booking-system-backend.onrender.com)
+- **Database**: MongoDB Atlas (Cloud)
+- **Environment**: Production
+
 ### Environment Setup
 - Set `NODE_ENV=production`
-- Configure production MongoDB URI
+- Configure production MongoDB URI (MongoDB Atlas)
 - Set secure JWT secret
-- Configure CORS for production domain
+- Configure CORS for production domain (Vercel frontend)
 
-### Recommended Platforms
-- **Render** - Easy Node.js deployment
+### Deployment Platforms
+- **Render** ✅ - Currently deployed (recommended for Node.js)
 - **Heroku** - Traditional PaaS option
 - **Railway** - Modern deployment platform
 - **DigitalOcean App Platform** - Scalable hosting
@@ -187,11 +193,11 @@ NODE_ENV=development
 ## 📝 Recent Changes
 
 ### Major Modifications
-- ✅ **Removed Admin System** - Simplified to employee-only access
-- ✅ **Democratized Room Management** - All employees can manage rooms
-- ✅ **Simplified Permissions** - Owner-based booking control only
-- ✅ **Cleaned API Routes** - Removed admin-only endpoints
-- ✅ **Updated Middleware** - Removed admin authentication checks
+- ✅ **Authentication Flow** - Registration now redirects to login (no auto-login)
+- ✅ **Booking Validation** - Added past date prevention and 24-hour duration limit
+- ✅ **Time Handling** - Proper datetime validation and conflict detection
+- ✅ **Error Handling** - User-friendly error messages for all validation failures
+- ✅ **Security Enhancements** - Comprehensive input validation and sanitization
 
 ## 🤝 Contributing
 
