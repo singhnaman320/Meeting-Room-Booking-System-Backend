@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const Room = require('../models/Room');
+const Booking = require('../models/Booking');
 const config = require('../config/config');
 
 const seedDatabase = async () => {
@@ -15,27 +16,31 @@ const seedDatabase = async () => {
     
     console.log('Cleared existing data...');
 
-    // Create admin user
-    console.log('Creating admin user...');
-    const adminUser = new User({
-      name: 'Admin User',
-      email: 'admin@example.com',
-      password: 'admin123',
-      department: 'IT',
-      role: 'admin'
-    });
-    await adminUser.save();
+    // Create sample employees
+    console.log('Creating sample employees...');
+    const users = [
+      {
+        name: 'John Doe',
+        email: 'john@example.com',
+        password: 'password123',
+        department: 'Marketing'
+      },
+      {
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        password: 'password123',
+        department: 'IT'
+      },
+      {
+        name: 'Mike Johnson',
+        email: 'mike@example.com',
+        password: 'password123',
+        department: 'Sales'
+      }
+    ];
 
-    // Create employee user
-    console.log('Creating employee user...');
-    const employeeUser = new User({
-      name: 'John Doe',
-      email: 'john@example.com',
-      password: 'password123',
-      department: 'Marketing',
-      role: 'employee'
-    });
-    await employeeUser.save();
+    const createdUsers = await User.insertMany(users);
+    console.log(`✅ Successfully created ${createdUsers.length} employees`);
 
     // Create sample rooms
     console.log('Creating sample rooms...');
@@ -98,19 +103,35 @@ const seedDatabase = async () => {
       }
     ];
 
-    await Room.insertMany(rooms);
+    const createdRooms = await Room.insertMany(rooms);
+    console.log(`✅ Successfully created ${createdRooms.length} rooms`);
 
-    console.log('Database seeded successfully!');
-    console.log('\nTest Accounts Created:');
-    console.log('Admin: admin@example.com / admin123');
-    console.log('Employee: john@example.com / password123');
-    console.log(`\nSample rooms created: ${rooms.length} rooms with various amenities and floor locations`);
+    // Verify data was created
+    const userCount = await User.countDocuments();
+    const roomCount = await Room.countDocuments();
+    
+    console.log('\n🎉 Database seeded successfully!');
+    console.log('\n👥 Test Employee Accounts Created:');
+    console.log('John Doe: john@example.com / password123');
+    console.log('Jane Smith: jane@example.com / password123');
+    console.log('Mike Johnson: mike@example.com / password123');
+    console.log(`\n🏢 Sample rooms created: ${rooms.length} rooms with various amenities and floor locations`);
+    console.log(`\n📊 Database Summary:`);
+    console.log(`  - Users: ${userCount}`);
+    console.log(`  - Rooms: ${roomCount}`);
+    
+    // List all rooms
+    const allRooms = await Room.find().select('name location capacity');
+    console.log('\n📋 Created rooms:');
+    allRooms.forEach(room => {
+      console.log(`  - ${room.name} (${room.location}) - Capacity: ${room.capacity}`);
+    });
 
   } catch (error) {
     console.error('Error seeding database:', error);
   } finally {
     await mongoose.connection.close();
-    console.log('Database connection closed');
+    console.log('\n🔌 Database connection closed');
   }
 };
 

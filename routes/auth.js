@@ -11,11 +11,11 @@ const router = express.Router();
 router.get('/test-users', async (req, res) => {
   try {
     const userCount = await User.countDocuments();
-    const users = await User.find().select('email name role');
+    const users = await User.find().select('email name department');
     res.json({ 
       message: 'Database connection successful',
       userCount,
-      users: users.map(u => ({ email: u.email, name: u.name, role: u.role }))
+      users: users.map(u => ({ email: u.email, name: u.name, department: u.department }))
     });
   } catch (error) {
     res.status(500).json({ 
@@ -38,7 +38,7 @@ router.post('/register', [
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, password, department, role } = req.body;
+    const { name, email, password, department } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -51,8 +51,7 @@ router.post('/register', [
       name,
       email,
       password,
-      department,
-      role: role || 'employee'
+      department
     });
 
     await user.save();
@@ -70,7 +69,6 @@ router.post('/register', [
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role,
         department: user.department
       }
     });
@@ -123,7 +121,6 @@ router.post('/login', [
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role,
         department: user.department
       }
     });
@@ -141,21 +138,9 @@ router.get('/me', auth, async (req, res) => {
         id: req.user._id,
         name: req.user.name,
         email: req.user.email,
-        role: req.user.role,
         department: req.user.department
       }
     });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// Get current user profile
-router.get('/me', auth, async (req, res) => {
-  try {
-    const user = await User.findById(req.user._id).select('-password');
-    res.json(user);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });

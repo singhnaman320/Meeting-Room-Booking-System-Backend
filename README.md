@@ -126,7 +126,7 @@ NODE_ENV=development
   email: String (required, unique),
   password: String (required, hashed),
   department: String,
-  role: String (default: 'employee'),
+  role: String (always 'employee'),
   createdAt: Date,
   updatedAt: Date
 }

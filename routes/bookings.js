@@ -34,7 +34,7 @@ router.get('/my-bookings', auth, async (req, res) => {
   }
 });
 
-// Get all bookings (Admin view)
+// Get all bookings
 router.get('/', auth, async (req, res) => {
   try {
     const { room, status, date } = req.query;
